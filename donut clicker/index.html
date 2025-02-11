@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="Upgrade.css">
+    <link rel="stylesheet" href="boutton.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donut Clicker</title>
+    <style>
+        
+        body {
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+        }
+        
+
+
+        #donut {
+            width: 200px;
+            height: 200px;
+            margin-top: 50px;
+        }
+
+        #score {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        .bt {
+            position: relative;
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #0a0909;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 16px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .bt .cross, .bt i {
+            pointer-events: none;
+        }
+
+        .wrapper {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    
+     <h1>Donut Clicker</h1>
+    
+    <div class="boutton">
+        <div class="wrapper">
+            <a class="cta" href="javascript:void(0)" id="donutButton">
+                <span>Donut</span>
+            </a>
+        </div>
+    </div>
+
+    <p id="score">Donuts: <span id="scoreValue">0</span></p>
+
+
+    <h2>Upgrades</h2>
+    <p id="clickValue">Click Value: 1</p>
+
+    <a class="bt more-bt" href="javascript:void(0)" onclick="buyUpgrade(10, 2)">
+        <p>Upgrade 1 (Cost: 10 donuts)</p>
+    </a>
+
+    <a class="bt more-bt" href="javascript:void(0)" onclick="buyUpgrade(20, 4)">
+        <p>Upgrade 2 (Cost: 20 donuts)</p>
+    </a>
+
+    <h2>Auto-Clicker</h2>
+    <p id="autoClickerStatus">Auto-Clicker: Off</p>
+
+    <a class="bt more-bt" href="javascript:void(0)" onclick="buyAutoClicker(50, 1)">
+        <p>Buy Auto-Clicker (Cost: 50 donuts)</p>
+    </a>
+
+    <a class="bt more-bt" href="javascript:void(0)" onclick="buyUpgradeAutoClicker(30, 1)">
+        <p>Upgrade Auto-Clicker (Cost: 30 donuts)</p>
+    </a>
+
+    <h2>Achievements</h2>
+    <p class="achievement" id="achievement1">Achievement 1: Not yet achieved</p>
+    <p class="achievement" id="achievement2">Achievement 2: Not yet achieved</p>
+    <p class="achievement" id="achievement3">Achievement 3: Not yet achieved</p>
+
+    <script>
+        var score = 0;
+        var clickValue = 1;
+        var autoClickerEnabled = false;
+        var autoClickerSpeed = 1;
+        var autoClickerInterval;
+        var upgradeCount = 0;
+
+        document.getElementById("donutButton").onclick = function() {
+            score += clickValue;
+            updateScore();
+            checkAchievements();
+        };
+
+        function updateScore() {
+            document.getElementById("scoreValue").innerText = score;
+        }
+
+        function updateClickValue() {
+            document.getElementById("clickValue").innerText = "Click Value: " + clickValue;
+        }
+
+        function updateAchievement(achievementId, message) {
+            document.getElementById(achievementId).innerText = message;
+        }
+
+        function buyUpgrade(cost, increase) {
+            if (score >= cost) {
+                score -= cost;
+                clickValue += increase;
+                upgradeCount++;
+                updateScore();
+                updateClickValue();
+                checkAchievements();
+            } else {
+                alert("Not enough donuts to buy this upgrade!");
+            }
+        }
+
+        function buyAutoClicker(cost, initialSpeed) {
+            if (score >= cost && !autoClickerEnabled) {
+                score -= cost;
+                autoClickerEnabled = true;
+                autoClickerSpeed = initialSpeed;
+                document.getElementById("autoClickerStatus").innerText = "Auto-Clicker: Speed x" + autoClickerSpeed;
+                autoClickerInterval = setInterval(autoClick, 1000 / autoClickerSpeed);
+                updateScore();
+                checkAchievements();
+            } else if (autoClickerEnabled) {
+                alert("Auto-Clicker is already enabled!");
+            } else {
+                alert("Not enough donuts to buy the Auto-Clicker!");
+            }
+        }
+
+        function buyUpgradeAutoClicker(cost, speedIncrease) {
+            if (score >= cost && autoClickerEnabled) {
+                score -= cost;
+                autoClickerSpeed += speedIncrease;
+                clearInterval(autoClickerInterval);
+                autoClickerInterval = setInterval(autoClick, 1000 / autoClickerSpeed);
+                document.getElementById("autoClickerStatus").innerText = "Auto-Clicker: Speed x" + autoClickerSpeed;
+                updateScore();
+                checkAchievements();
+            } else {
+                alert("Auto-Clicker is not enabled, or not enough donuts to buy this upgrade!");
+            }
+        }
+
+        function autoClick() {
+            score += clickValue;
+            updateScore();
+        }
+
+        function checkAchievements() {
+            if (score >= 100) {
+                updateAchievement("achievement1", "Achievement 1: 100 Donuts!");
+            }
+
+            if (upgradeCount >= 5) {
+                updateAchievement("achievement2", "Achievement 2: 5 Upgrades!");
+            }
+
+            if (autoClickerEnabled && autoClickerSpeed > 1) {
+                updateAchievement("achievement3", "Achievement 3: Auto-Clicker upgraded!");
+            }
+        }
+    </script>
+
+</body>
+</html>
